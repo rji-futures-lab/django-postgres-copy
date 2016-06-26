@@ -21,7 +21,8 @@ class CopyMapping(object):
         delimiter=',',
         null=None,
         encoding=None,
-        static_mapping=None
+        static_mapping=None,
+        freeze=False,
     ):
         self.model = model
         self.mapping = mapping
@@ -44,6 +45,7 @@ class CopyMapping(object):
             self.static_mapping = OrderedDict(static_mapping)
         else:
             self.static_mapping = {}
+        self.freeze = freeze
 
         # Connect the headers from the CSV with the fields on the model
         self.field_header_crosswalk = []
@@ -181,6 +183,8 @@ class CopyMapping(object):
             options['extra_options'] += " NULL '%s'" % self.null
         if self.encoding:
             options['extra_options'] += " ENCODING '%s'" % self.encoding
+        if self.freeze:
+            options['extra_options'] += " FREEZE "
         return sql % options
 
     def prep_insert(self):
